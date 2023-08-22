@@ -1,11 +1,14 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
+
 import { type Pages } from "~/types/types";
 
 const Home: NextPage = () => {
   const [currentPage, setCurrentPage] = useState("resin");
 
+  // const [title, setTitle] = useState('Resin')
   const pages: Pages = {
     name: "",
     max: 0,
@@ -26,7 +29,9 @@ const Home: NextPage = () => {
     pages.minute = 8;
   }
 
-  const title = `${pages.name.charAt(0).toUpperCase() + pages.name.slice(1)}`;
+  const title = String(
+    `${pages.name.charAt(0).toUpperCase() + pages.name.slice(1)}`
+  );
   const [resin, setResin] = useState(0);
   const [currResin, setCurrResin] = useState<number | null>(null);
   const [time, setTime] = useState(new Date());
@@ -48,6 +53,11 @@ const Home: NextPage = () => {
     const newTime = new Date(Date.now() + customTimeMs);
     setTime(newTime);
     setCalculated(true);
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    calculateTime();
   };
 
   return (
@@ -77,7 +87,7 @@ const Home: NextPage = () => {
             {title} Calculator
           </h1>
         </div>
-        <div className="mx-4 flex flex-col gap-y-4">
+        <form className="mx-4 flex flex-col gap-y-4" onSubmit={handleSubmit}>
           <label
             htmlFor={pages.name}
             className="mb-2 block font-medium text-gray-900 dark:text-white"
@@ -104,23 +114,20 @@ const Home: NextPage = () => {
             }}
           />
           <div className="flex items-center ">
-            <button
-              type="button"
-              className="w-2/12 rounded-lg bg-blue-700 px-5 py-6 font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              onClick={calculateTime}
-            >
+            <button className="rounded-lg bg-blue-700 px-5 py-6 font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 lg:w-2/12">
               Calculate
             </button>
             <div className="ml-4  text-xs tracking-tight text-white sm:text-[5rem]">
               {calculated && currResin !== null ? `${resin} ${title}` : ""}
             </div>
           </div>
+
           <div className="text-center tracking-tight text-white sm:text-[5rem]">
             {calculated && currResin !== null
               ? `Will be full at: ${time.toLocaleTimeString()}`
               : ""}
           </div>
-        </div>
+        </form>
         <a
           href="https://github.com/taufiqidr/calculator"
           target="_blank"
